@@ -33,7 +33,7 @@ Execute code:
 |---|-----------------------| -----------:|
 | 1 | Akul Rastogi          | 20331653    |
 | 2 | Angkirat Singh Sandhu ||
-| 3 | Archit Jhingan        ||
+| 3 | Archit Jhingan        || 20307968 |
 | 4 | Deepanshu Jain        ||
 
 ### Shared Documents
