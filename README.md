@@ -1,6 +1,6 @@
-# CS7IS2 - Artificial Intelligence - Group Project
+# CS7IS2 - Artificial Intelligence - Group Londis
 
-### Group Members
+### `LONDIS` Group Members
 |   | Name                  | Student Id  |
 |---|-----------------------| -----------:|
 | 1 | Akul Rastogi          | 20331653    |
