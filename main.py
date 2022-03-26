@@ -16,6 +16,6 @@ logging.info(f'Loaded gym environmnet {env_name}')
 
 rl = ReinforcementLearning(
     env, alpha=0.9, epsilon=0.5, gamma=0.8, model_file=None)
-rl.start_learning(iteration_count=20, saveAfter=5)
+rl.start_learning(iteration_count=50000, saveAfter=100)
 
-rl.test_execution(iteration_count=10)
+rl.test_execution(iteration_count=20)
