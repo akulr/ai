@@ -37,6 +37,9 @@ class GymEnvironment:
                     logging.info(
                         f'Random Execution Iteration {i}; total Steps Taken {episode_step_count}; Rewards gained: {episode_reward}')
                     break
+            reward_list.append(episode_reward)
+            step_list.append(episode_step_count)
+            
         print('=='*50)
         print('Random Execution')
         print('Mean Reward: {}'.format(mean(reward_list)))
