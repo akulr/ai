@@ -54,6 +54,7 @@ class ReinforcementLearning:
         return max([self.get_qval(state, action) for action in self.env.getPossibleActions()])
 
     def start_learning(self, iteration_count: int, saveAfter: int = 1) -> None:
+        print(self.env.envName)
         iteration_count += 1
         for i in tqdm(range(1, iteration_count)):
             episode_reward = 0

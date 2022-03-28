@@ -40,8 +40,8 @@ class GymEnvironment:
             reward_list.append(episode_reward)
             step_list.append(episode_step_count)
             
-        print('=='*50)
-        print('Random Execution')
-        print('Mean Reward: {}'.format(mean(reward_list)))
-        print('Mean Steps: {}'.format(mean(step_list)))
-        print('=='*50)
+        logging.info('=='*50)
+        logging.info('Random Execution')
+        logging.info('Mean Reward: {}'.format(mean(reward_list)))
+        logging.info('Mean Steps: {}'.format(mean(step_list)))
+        logging.info('=='*50)

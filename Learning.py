@@ -20,7 +20,8 @@ args = parser.parse_args()
 
 print(f'Argument: {args}')
 
-GYM_ENV = None
+env_name = 'Taxi-v3'
+GYM_ENV = GymEnvironment(envName=args.gym_env)
 
 logging.basicConfig(
     format='%(levelname)s:%(asctime)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
@@ -30,8 +31,8 @@ logging.basicConfig(
 logging.info(f'Executing with Parameters: {args}')
 
 def environment_init():
-    env_name = 'Taxi-v3'
-    GYM_ENV = GymEnvironment(envName=args.gym_env)
+    # env_name = 'Taxi-v3'
+    # GYM_ENV = GymEnvironment(envName=args.gym_env)
     logging.info(f'Loaded gym environmnet {env_name}')
     GYM_ENV.baselineExecution(iteration=args.itr_testing)
 
