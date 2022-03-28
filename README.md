@@ -40,7 +40,7 @@ Execute code:
 ``` python main.py```
 # CS7IS2 - Artificial Intelligence - Group Project
 
-### Group Members
+### `LONDIS` Group Members
 |   | Name                  | Student Id  |
 |---|-----------------------| -----------:|
 | 1 | Akul Rastogi          | 20331653    |
