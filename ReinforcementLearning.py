@@ -1,4 +1,5 @@
 from GymEnvironment import GymEnvironment
+from statistics import mean
 from tqdm import tqdm
 import logging
 import util
@@ -34,6 +35,18 @@ class ReinforcementLearning:
             action_cntr[action] = self._q_val[(state, action)]
         return action_cntr.argMax()
 
+    def store_model(self) -> None:
+        folder_path = os.path.dirname(self.model_file)
+        if len(folder_path) != 0:
+            os.makedirs(folder_path, exist_ok=True)
+        pickle.dump(self._q_val, open(self.model_file, 'wb'))
+
+    def load_model(self) -> None:
+        if not os.path.isfile(self.model_file):
+            logging.info('No model created')
+            return None
+        self._q_val = pickle.load(open(self.model_file, 'rb'))    # nosec
+
     def computeStateQvalue(self, state: int) -> float:
         return max([self._q_val[(state, action)] for action in self.env.getPossibleActions()])
 
@@ -43,12 +56,17 @@ class ReinforcementLearning:
             episode_reward = 0
             step = 0
 
+            old_observation = 0
             observation = self.env.env.reset()
             while True:
                 # self.env.env.render()
 
+                old_observation = observation
                 action = self.getAction(observation)
                 observation, reward, done, info = self.env.env.step(action)
+
+                self.updateQvalues(old_observation, action,
+                                   reward, observation)
 
                 episode_reward += reward
                 step += 1
@@ -63,17 +81,47 @@ class ReinforcementLearning:
                     break
 
             if (i % saveAfter) == 0:
-                logging.info(f'Training Iteration {i}; Creating pickle dump of the Q-values')
+                logging.info(
+                    f'Training Iteration {i}; Creating pickle dump of the Q-values')
                 self.store_model()
 
-    def store_model(self) -> None:
-        folder_path = os.path.dirname(self.model_file)
-        if len(folder_path) != 0:
-            os.makedirs(folder_path, exist_ok=True)
-        pickle.dump(self._q_val, open(self.model_file, 'wb'))
+    def test_execution(self, iteration_count: int):
+        reward_list = []
+        step_list = []
 
-    def load_model(self) -> None:
-        if not os.path.isfile(self.model_file):
-            logging.info('No model created')
-            return None
-        self._q_val = pickle.load(open(self.model_file, 'rb'))    # nosec
+        for i in tqdm(range(iteration_count)):
+            episode_reward = 0
+            step = 0
+
+            observation = self.env.env.reset()
+            while True:
+                # self.env.env.render()
+
+                action = self.getPolicy(observation)
+                observation, reward, done, info = self.env.env.step(action)
+
+                episode_reward += reward
+                step += 1
+
+                if (step % 500) == 0:
+                    logging.debug(
+                        f'Testing Iteration {i}; Total Steps {step}; Reward gained: {episode_reward}; Action: {action}; status: {done}')
+
+                if reward == 20:
+                    logging.info(
+                        f'Testing Iteration {i}; total Steps Taken {step}; Rewards gained: {episode_reward}')
+                    break
+
+            reward_list.append(episode_reward)
+            step_list.append()
+
+        logging.info('=='*50)
+        logging.info(
+            f'Testing Total Iterations {iteration_count}; Mean Reward {mean(reward_list)}; Averge Steps taken are {mean(step_list)}')
+        logging.info('=='*50)
+
+        print('=='*50)
+        print('Test Execution')
+        print('Mean Reward: {}'.format(mean(reward_list)))
+        print('Mean Steps: {}'.format(mean(step_list)))
+        print('=='*50)
