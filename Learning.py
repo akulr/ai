@@ -27,6 +27,8 @@ logging.basicConfig(
     filename='gamePython.log', encoding='utf-8', level=(logging.DEBUG if args.debug else logging.INFO)
 )
 
+logging.info(f'Executing with Parameters: {args}')
+
 def environment_init():
     env_name = 'Taxi-v3'
     GYM_ENV = GymEnvironment(envName=args.gym_env)
@@ -44,5 +46,7 @@ def qvalue():
     rl.start_learning(iteration_count=args.itr_training, saveAfter=10)
     rl.test_execution(iteration_count=args.itr_testing)
 
-# if __name__ == "__main__":
-#     pass
+if __name__ == "__main__":
+    environment_init()
+    qvalue()
+    pass
