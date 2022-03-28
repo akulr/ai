@@ -18,6 +18,9 @@ class ReinforcementLearning:
         self.model_file = 'ModelOutput/RL-Qlearning.pkl' if model_file is None else model_file
         self.load_model()
 
+    def get_qval(self, state, action):
+        return self._q_val[(state, action)]
+
     def getAction(self, state) -> int:
         if util.flipCoin(self.epsilon):
             return self.env.sample_action()
@@ -26,13 +29,13 @@ class ReinforcementLearning:
     def updateQvalues(self, state: int, action: int, reward: float, nextState: int) -> None:
         sample = self.alpha * \
             (reward + (self.gamma * self.computeStateQvalue(nextState)))
-        self._q_val[(nextState, action)] = ((1 - self.alpha) *
+        self._q_val[(state, action)] = ((1 - self.alpha) *
                                             self._q_val[(state, action)]) + sample
 
     def getPolicy(self, state: int) -> int:
         action_cntr = util.Counter()
         for action in self.env.getPossibleActions():
-            action_cntr[action] = self._q_val[(state, action)]
+            action_cntr[action] = self.get_qval(state, action)
         return action_cntr.argMax()
 
     def store_model(self) -> None:
@@ -48,7 +51,7 @@ class ReinforcementLearning:
         self._q_val = pickle.load(open(self.model_file, 'rb'))    # nosec
 
     def computeStateQvalue(self, state: int) -> float:
-        return max([self._q_val[(state, action)] for action in self.env.getPossibleActions()])
+        return max([self.get_qval(state, action) for action in self.env.getPossibleActions()])
 
     def start_learning(self, iteration_count: int, saveAfter: int = 1) -> None:
         iteration_count += 1
@@ -84,10 +87,15 @@ class ReinforcementLearning:
                 logging.info(
                     f'Training Iteration {i}; Creating pickle dump of the Q-values')
                 self.store_model()
+        self.store_model()
 
     def test_execution(self, iteration_count: int):
         reward_list = []
         step_list = []
+
+        logging.info("\n\n")
+        logging.info("=="*50)
+        logging.info("\n\n")
 
         for i in tqdm(range(iteration_count)):
             episode_reward = 0
@@ -98,7 +106,7 @@ class ReinforcementLearning:
                 # self.env.env.render()
 
                 action = self.getPolicy(observation)
-                observation, reward, done, info = self.env.env.step(action)
+                observation, reward, done, _ = self.env.env.step(action)
 
                 episode_reward += reward
                 step += 1
@@ -113,7 +121,7 @@ class ReinforcementLearning:
                     break
 
             reward_list.append(episode_reward)
-            step_list.append()
+            step_list.append(step)
 
         logging.info('=='*50)
         logging.info(
@@ -121,7 +129,7 @@ class ReinforcementLearning:
         logging.info('=='*50)
 
         print('=='*50)
-        print('Test Execution')
+        print('Test Execution - Q Learning')
         print('Mean Reward: {}'.format(mean(reward_list)))
         print('Mean Steps: {}'.format(mean(step_list)))
         print('=='*50)
