@@ -12,7 +12,7 @@ gym_environment = 'Taxi-v3'
 env = gym.make(gym_environment)
 logging.info('{} GYM environment initiated'.format(gym_environment))
 
-game_count = 20
+game_count = 1
 max_steps = 10000000000
 logging.info('{} Games played with max steps are {}'.format(
     game_count, max_steps))
@@ -27,12 +27,14 @@ for i_episode in range(game_count):
 
         # print(observation)
         # Sample actions set
-        action = env.action_space.sample()
+        # action = env.action_space.sample()
+        action = int(input('select Action: '))
 
         # Result of the action performed
         observation, reward, done, info = env.step(action)
         episode_reward += reward
-        
+        print(f'Reward: {reward}; episode Reward: {episode_reward}')
+
         logging.debug('{} action: {} and achived Reward is {}'.format(
             (t+1), action, reward))
 
