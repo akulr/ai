@@ -3,7 +3,7 @@ import logging
 import argparse
 
 from GymEnvironment import GymEnvironment
-from ReinforcementLearning import ReinforcementLearning
+from ReinforcementLearning_Qvalue import ReinforcementLearning_Qvalue
 
 parser = argparse.ArgumentParser()
 
@@ -37,7 +37,7 @@ def environment_init():
     GYM_ENV.baselineExecution(iteration=args.itr_testing)
 
 def qvalue():
-    rl = ReinforcementLearning(
+    rl = ReinforcementLearning_Qvalue(
         GYM_ENV,
         alpha=args.alpha,
         epsilon=args.ep, 

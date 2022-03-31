@@ -7,7 +7,7 @@ import pickle   # nosec
 import os
 
 
-class ReinforcementLearning:
+class ReinforcementLearning_Qvalue:
 
     def __init__(self, env: GymEnvironment, alpha: float = 1.0, epsilon: float = 0.05, gamma: float = 0.8, model_file: str = None) -> None:
         self.env = env
@@ -30,7 +30,7 @@ class ReinforcementLearning:
         sample = self.alpha * \
             (reward + (self.gamma * self.computeStateQvalue(nextState)))
         self._q_val[(state, action)] = ((1 - self.alpha) *
-                                            self._q_val[(state, action)]) + sample
+                                        self._q_val[(state, action)]) + sample
 
     def getPolicy(self, state: int) -> int:
         action_cntr = util.Counter()
