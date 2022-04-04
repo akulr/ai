@@ -3,6 +3,7 @@ import logging
 import argparse
 
 from GymEnvironment import GymEnvironment
+from ReinforcementLearning_DQN import ReinforcementLearning_DQN
 from ReinforcementLearning_Qvalue import ReinforcementLearning_Qvalue
 
 parser = argparse.ArgumentParser()
@@ -25,14 +26,12 @@ GYM_ENV = GymEnvironment(envName=args.gym_env)
 
 logging.basicConfig(
     format='%(levelname)s:%(asctime)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
-    filename='gamePython.log', encoding='utf-8', level=(logging.DEBUG if args.debug else logging.INFO)
+    filename='DQN-Learning.log', encoding='utf-8', level=(logging.DEBUG if args.debug else logging.INFO)
 )
 
 logging.info(f'Executing with Parameters: {args}')
 
 def environment_init():
-    # env_name = 'Taxi-v3'
-    # GYM_ENV = GymEnvironment(envName=args.gym_env)
     logging.info(f'Loaded gym environmnet {env_name}')
     GYM_ENV.baselineExecution(iteration=args.itr_testing)
 
@@ -47,7 +46,12 @@ def qvalue():
     rl.start_learning(iteration_count=args.itr_training, saveAfter=10)
     rl.test_execution(iteration_count=args.itr_testing)
 
+def rl_dqn():
+    dqn_class = ReinforcementLearning_DQN(GYM_ENV)
+    dqn_class.train_agent()
+
 if __name__ == "__main__":
-    environment_init()
-    qvalue()
+    # environment_init()
+    # qvalue()
+    rl_dqn()
     pass

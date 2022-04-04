@@ -17,7 +17,7 @@ class GymEnvironment:
         return list(range(action_space.start, action_space.n))
     
     def tf_environment(self):
-        suit_gym_env = tf_agents.environments.suite_gym(self.envName)
+        suit_gym_env = tf_agents.environments.suite_gym.load(self.envName)
         return tf_agents.environments.tf_py_environment.TFPyEnvironment(suit_gym_env)
 
     def sample_action(self) -> int:
