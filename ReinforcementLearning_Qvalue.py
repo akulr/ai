@@ -134,3 +134,21 @@ class ReinforcementLearning_Qvalue:
         print('Mean Reward: {}'.format(mean(reward_list)))
         print('Mean Steps: {}'.format(mean(step_list)))
         print('=='*50)
+        
+        return reward_list
+
+if __name__ == "__main__":
+    env_name = 'Taxi-v3'
+    GYM_ENV = GymEnvironment(envName=env_name)
+    
+    rl = ReinforcementLearning_Qvalue(
+        GYM_ENV,
+        alpha=0.9,
+        epsilon=0.5, 
+        gamma=0.2,
+        model_file=None
+    )
+    rl.start_learning(iteration_count=5000, saveAfter=10)
+    reward_list = rl.test_execution(iteration_count=100)
+    
+    util.plot_rewards(reward_list)

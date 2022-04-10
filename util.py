@@ -17,7 +17,9 @@
 import heapq
 import random
 import functools
+import re
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class Stack:
@@ -345,6 +347,56 @@ def sample_n_unique(sampling_f, n):
             res.append(candidate)
     return res
 
+def plot_rewards(reward_arr, save=True):
+    
+    avg_reward_arr = []
+    stdev_reward_arr = []
+    episodic_reward = []
+    for i in reward_arr:
+        episodic_reward.append(i)
+        if len(episodic_reward) <= 10:
+            avg_reward_arr.append(np.mean(np.array(episodic_reward)))
+            if len(episodic_reward) >= 2:
+                stdev_reward_arr.append(np.std(np.array(episodic_reward)))
+        else:
+            avg_reward_arr.append(np.mean(np.array(episodic_reward[-10:])))
+            stdev_reward_arr.append(np.std(np.array(episodic_reward[-10:])))
+            
+    avg_reward_arr = np.array(avg_reward_arr)
+    stdev_reward_arr = np.array(stdev_reward_arr)
+
+    fig1 = plt.figure(1)
+    # rewards + average rewards
+    plt.plot(reward_arr, color='b', alpha=0.3)
+    plt.plot(avg_reward_arr, color='b')
+    plt.xlabel('# episodes')
+    plt.ylabel('Acc. episodic reward')
+    plt.title('Accumulated episodic reward vs. num. of episodes')
+    plt.legend(['Acc. episodic reward', 'Avg. acc. episodic reward'])
+    plt.tight_layout()
+
+    # average rewards + stdevs
+    fig2 = plt.figure(2)
+    plt.plot(avg_reward_arr, color='b')
+    plt.fill_between(range(1, len(avg_reward_arr)), avg_reward_arr[1:] - stdev_reward_arr,
+                     avg_reward_arr[1:] + stdev_reward_arr, color='b', alpha=0.2)
+    plt.xlabel('# episodes')
+    plt.ylabel('Acc. episodic reward')
+    plt.title('Accumulated episodic reward vs. num. of episodes')
+    plt.legend(['Avg. acc. episodic reward', 'Stdev envelope of acc. episodic reward'])
+    plt.tight_layout()
+
+    plt.pause(0.01)
+
+    if save:
+        fig1.savefig('AccRewardVsEpisode_AC_finite')
+        fig2.savefig('AccRewardVsEpisode_AC_stdev_finite')
+        np.save('rewards_AC_finite', reward_arr)
+        np.save('avg_rewards_AC_finite', avg_reward_arr)
+        np.save('stdev_rewards_AC_finite', stdev_reward_arr)
+
+    fig1.clf()
+    fig2.clf()
 
 class ReplayBuffer(object):
     def __init__(self, size, frame_history_len, lander=True):
