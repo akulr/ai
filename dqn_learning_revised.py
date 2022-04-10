@@ -3,6 +3,7 @@ from typing import Any
 import tensorflow as tf
 import numpy as np
 import time
+import torch
 
 import util
 from gym_environment import GymEnvironment
@@ -188,6 +189,28 @@ class DQN_Learning:
                 if (num_param_updates % target_update_freq) == 0:
                     self.target_model.set_weights(self.model.get_weights())
                     pass
+    def evaluate_model(self, episode_count:int, saved_model:str=None):
+        if saved_model is not None:
+            self.model = torch.load(saved_model)
+        for i in range(episode_count):
+            _, state_index = self.env.env.reset()
+            episodic_reward = 0
+            episodic_steps = 0
+            reward_list = []
+            step_list = []
+            while True:
+                state_encoded = self.encode_state(np.array([state_index]), 1)
+                action, _ = self.compute_action(state_encoded)
+                (_, state_index), reward, done, _ = self.env.env.step(action)
+                episodic_reward += reward
+                episodic_steps += 1
+                if done:
+                    break
+            reward_list.append(episodic_reward)
+            step_list.append(episodic_steps)
+            if ((i+1)%10) == 0:
+                print(f'10 Episode Summary; Reward avg: {np.mean(reward_list[-10:])}; Step avg {np.mean(step_list[-10:])}')
+        print(f'100 Episode Summary; Reward avg: {np.mean(reward_list)}; Step avg {np.mean(step_list)}')
 
 
 if __name__ == "__main__":
@@ -207,3 +230,6 @@ if __name__ == "__main__":
 
     dqn_agent.start_training(
         training_episodes=3_000, start_training=50000, batch_size=32, target_update_freq=10000)
+    
+    print("=="*10)
+    dqn_agent.evaluate_model(100, 'ModelOutput/torch_ActorCriticModel')
