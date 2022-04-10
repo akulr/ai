@@ -107,7 +107,8 @@ class PollicyGradient_Learning:
                 
                 if self.avg_episodic_rewards[-1] > self.best_avg_episodic_reward:
                     self.best_avg_episodic_reward = self.avg_episodic_rewards[-1]
-                    torch.save(self.ac_model, 'ModelOutput/torch_ActorCriticModel')
+                    if save_model is not None:
+                        torch.save(self.ac_model, save_model)
                 
                 if (episode_counter % 20) == 0:
                     print(
@@ -119,6 +120,30 @@ class PollicyGradient_Learning:
 
                 self.update_weights(action_info_list, reward_list)
                 action_info_list, reward_list = [], []
+
+    def evaluate_model(self, episode_count:int, saved_model:str=None):
+        if saved_model is not None:
+            self.model = torch.load(saved_model)
+        for i in range(episode_count):
+            _, state_index = self.env.env.reset()
+            episodic_reward = 0
+            episodic_steps = 0
+            reward_list = []
+            step_list = []
+            while True:
+                state_encoded = self.encode_state(np.array([state_index]), 1)
+                action, _ = self.compute_action(state_encoded)
+                (_, state_index), reward, done, _ = self.env.env.step(action)
+                episodic_reward += reward
+                episodic_steps += 1
+                if done:
+                    break
+            reward_list.append(episodic_reward)
+            step_list.append(episodic_steps)
+            if ((i+1)%10) == 0:
+                print(f'10 Episode Summary; Reward avg: {np.mean(reward_list[-10:])}; Step avg {np.mean(step_list[-10:])}')
+        print(f'100 Episode Summary; Reward avg: {np.mean(reward_list)}; Step avg {np.mean(step_list)}')
+
                 
 
 if __name__ == "__main__":
@@ -127,4 +152,7 @@ if __name__ == "__main__":
     env = GymEnvironment(ENV_NAME)
 
     actor_critic_agent = PollicyGradient_Learning(env, 500)
-    actor_critic_agent.start_training(20000)
+    actor_critic_agent.ac_model = torch.load('ModelOutput/torch_ActorCriticModel')
+    actor_critic_agent.start_training(20000, 'ModelOutput/torch_ActorCriticModel')
+    print("=="*10)
+    actor_critic_agent.evaluate_model(100, 'ModelOutput/torch_ActorCriticModel')
