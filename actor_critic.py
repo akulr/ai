@@ -90,8 +90,8 @@ class PollicyGradient_Learning:
             if reward == 20:
                 episode_counter += 1
                 _, state_index = self.env.env.reset()
-                self.episodic_rewards.append(episode_counter)
-                episode_counter = 0
+                self.episodic_rewards.append(episode_rewards)
+                episode_rewards = 0
 
                 if len(self.episodic_rewards) <= 10:
                     self.avg_episodic_rewards.append(
