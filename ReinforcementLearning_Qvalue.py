@@ -53,8 +53,9 @@ class ReinforcementLearning_Qvalue:
     def computeStateQvalue(self, state: int) -> float:
         return max([self.get_qval(state, action) for action in self.env.getPossibleActions()])
 
-    def start_learning(self, iteration_count: int, saveAfter: int = 1) -> None:
+    def start_learning(self, iteration_count: int, saveAfter: int = 1):
         print(self.env.envName)
+        reward_list = []
         iteration_count += 1
         for i in tqdm(range(1, iteration_count)):
             episode_reward = 0
@@ -83,12 +84,14 @@ class ReinforcementLearning_Qvalue:
                     logging.info(
                         f'Training Iteration {i}; total Steps Taken {step}; Rewards gained: {episode_reward}')
                     break
+            reward_list.append(episode_reward)
 
             if (i % saveAfter) == 0:
                 logging.info(
                     f'Training Iteration {i}; Creating pickle dump of the Q-values')
                 self.store_model()
         self.store_model()
+        return reward_list
 
     def test_execution(self, iteration_count: int):
         reward_list = []
@@ -138,6 +141,7 @@ class ReinforcementLearning_Qvalue:
         return reward_list
 
 if __name__ == "__main__":
+    
     env_name = 'Taxi-v3'
     GYM_ENV = GymEnvironment(envName=env_name)
     
@@ -148,7 +152,9 @@ if __name__ == "__main__":
         gamma=0.2,
         model_file=None
     )
-    rl.start_learning(iteration_count=5000, saveAfter=10)
-    reward_list = rl.test_execution(iteration_count=100)
     
+    reward_list = rl.start_learning(iteration_count=5000, saveAfter=10)
+    util.plot_rewards(reward_list)
+    
+    reward_list = rl.test_execution(iteration_count=100)
     util.plot_rewards(reward_list)

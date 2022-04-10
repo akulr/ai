@@ -389,11 +389,11 @@ def plot_rewards(reward_arr, save=True):
     plt.pause(0.01)
 
     if save:
-        fig1.savefig('AccRewardVsEpisode_AC_finite')
-        fig2.savefig('AccRewardVsEpisode_AC_stdev_finite')
-        np.save('rewards_AC_finite', reward_arr)
-        np.save('avg_rewards_AC_finite', avg_reward_arr)
-        np.save('stdev_rewards_AC_finite', stdev_reward_arr)
+        fig1.savefig('AccRewardVsEpisode')
+        fig2.savefig('AccRewardVsEpisode')
+        np.save('rewards', reward_arr)
+        np.save('avg_rewards', avg_reward_arr)
+        np.save('stdev_rewards', stdev_reward_arr)
 
     fig1.clf()
     fig2.clf()
